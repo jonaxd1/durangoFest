@@ -1,10 +1,9 @@
 import request from '../utils/request';
 
-function byCategory(category) {
+function getInfo(idUser) {
 	return request({
-        url: '/products/byCategory',
-        params: { category: category },
-		method: 'GET',
+		url: '/users/info',
+		params: { idUser },
 	}).then((response) => {
 		const { data, errmsg, errcode } = response.data;
 		if (errmsg) throw Object({ message: errmsg, code: errcode });
@@ -12,6 +11,4 @@ function byCategory(category) {
 	});
 }
 
-export default {
-	byCategory,
-};
+export default { getInfo };

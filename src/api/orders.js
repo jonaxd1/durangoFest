@@ -1,10 +1,10 @@
 import request from '../utils/request';
 
-function byCategory(category) {
+function placeOrder(order) {
 	return request({
-        url: '/products/byCategory',
-        params: { category: category },
-		method: 'GET',
+        url: '/orders/place',
+        params: order,
+		method: 'POST',
 	}).then((response) => {
 		const { data, errmsg, errcode } = response.data;
 		if (errmsg) throw Object({ message: errmsg, code: errcode });
@@ -13,5 +13,5 @@ function byCategory(category) {
 }
 
 export default {
-	byCategory,
+	placeOrder,
 };
