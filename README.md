@@ -10,12 +10,12 @@ In the project directory, you can run:
 
 ### `npm start`
 
-Starts the react packager/server in the development mode.<br>
+Starts the react packager/server in the development mode. <br>
 New Terminal window will be opened.
 
 ### `npm run ios`
 
-Builds and runs the app in the development mode.<br>
+Builds and runs the app in the development mode. <br>
 Open iOS Simulator in default device (iPhone X).
 
 ## Authors
