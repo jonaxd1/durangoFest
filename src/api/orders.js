@@ -12,6 +12,19 @@ function placeOrder(order) {
 	});
 }
 
+function getOrders(idUser) {
+	return request({
+		url: '/orders/all',
+		params: {idUser: idUser},
+		method: 'GET',
+	}).then((response) => {
+		const { data, errmsg, errcode } = response.data;
+		if (errmsg) throw Object({ message: errmsg, code: errcode });
+		return data;
+	});
+}
+
 export default {
 	placeOrder,
+	getOrders,
 };

@@ -6,6 +6,7 @@ import {
 	StyleSheet,
 	View,
 	TouchableOpacity,
+	Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
 import Toast from 'react-native-simple-toast';
@@ -14,6 +15,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import api from '../../api';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicon from 'react-native-vector-icons/Ionicons';
+import Header from '../../components/Header';
 
 const styles = StyleSheet.create({
 	container: {
@@ -131,18 +133,25 @@ class MyOrder extends React.Component {
 		this.loadOrder = this.loadOrder.bind(this);
 		this.calculateTotal = this.calculateTotal.bind(this);
 		this.calculateTime = this.calculateTime.bind(this);
+		this.placeOrder = this.placeOrder.bind(this);
 	}
 	
 	componentDidMount() {
 		const { navigation } = this.props;
 		this.loadOrder;
-		navigation.addListener('willFocus', this.loadOrder)
+		this._navListener = navigation.addListener('willFocus', this.loadOrder)
+	}
+
+	componentWillUnmount() {
+		this._navListener.remove();
 	}
 
 	loadOrder() {
 		const { navigation } = this.props;
+
 		const order = navigation.getParam('order', []);
 		const total = navigation.getParam('total', 0);
+		navigation.setParams({order: [], total: 0});
 		this.setState({ order: order, totalPrice: total }, () => {
 			this.calculateTime();
 			this.totalItems();
@@ -260,7 +269,7 @@ class MyOrder extends React.Component {
 			style={styles.rowContainer}
 		>
 			<Image
-				source={{uri: `http://localhost:3000/${item.img}`}}
+				source={{uri: 'http://localhost:3000/'+item.img}}
 				style={styles.rowImg}
 			/>
 			<View
@@ -274,7 +283,7 @@ class MyOrder extends React.Component {
 				>{item.description}</Text>
 				<Text
 					style={styles.rowPrice}
-				>{`$${item.price}`}</Text>
+				>${item.price}</Text>
 			</View>
 			<View
 				style={{
@@ -322,7 +331,18 @@ class MyOrder extends React.Component {
 		</View>
 	)};
 	
+	confirmSave = () => {
+		Alert.alert(
+			'Confirmar',
+			'¿Estás seguro de realizar el pedido?',
+			[
+				{ text: 'Cancelar', onPress: () => null, style: 'cancel' },
+				{ text: 'OK', onPress: this.placeOrder },
+			])
+	}
+
 	async placeOrder() {
+		debugger;
 		const { order, totalPrice } = this.state;
 		let handleOrder = [...order || []];
 		let orderToPlace = [];
@@ -347,6 +367,13 @@ class MyOrder extends React.Component {
 		api.orders.placeOrder(orderObj)
 			.then((res) => {
 				const { navigation } = this.props;
+		
+				this.setState({
+					order: [],
+					totalItems: 0,
+					totalPrice: 0,
+					totalEstimatedTime: 0,
+				});
 				navigation.navigate('Confirmation', {order: res});
 			});
 	};
@@ -358,9 +385,9 @@ class MyOrder extends React.Component {
 			<SafeAreaView
 				style={styles.container}
 			>
-				<Text
-					style={styles.title}
-				>Mi Orden</Text>
+				<Header
+					title="Mi Orden"
+				/>
 				{
 					order.length > 0
 					? (
@@ -400,7 +427,7 @@ class MyOrder extends React.Component {
 							</View>
 							<TouchableOpacity
 								style={styles.buttonContainer}
-								onPress={() => this.placeOrder()}
+								onPress={this.confirmSave}
 							>
 								<Text
 									style={styles.textButton}

@@ -6,6 +6,7 @@ import Ionicicon from 'react-native-vector-icons/Ionicons';
 import Menu from '../screens/Menu';
 import MyOrder from '../screens/MyOrder';
 import Confirmation from '../screens/Confirmation';
+import History from '../screens/History';
 
 const BottomNavigator = createBottomTabNavigator(
 	{
@@ -25,6 +26,20 @@ const BottomNavigator = createBottomTabNavigator(
 				)
 			},
 		},
+		Historial: {
+			screen: History,
+			navigationOptions: {
+				tabBarIcon: ({ tintColor }) => (
+				  <Ionicicon name="ios-filing" size={28} color={tintColor} />
+				)
+			},
+		}
+	}, {
+		tabBarOptions: {
+			style: {
+				backgroundColor: '#EFEFEF',
+			}
+		}
 	}
 );
 

@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
 import Toast from 'react-native-simple-toast';
+import Header from '../../components/Header';
 
 import api from '../../api';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -130,12 +131,34 @@ class Menu extends React.Component {
 		this.loadProducts = this.loadProducts.bind(this)
 		this.addToOrder = this.addToOrder.bind(this)
 		this.gotoMyOrder = this.gotoMyOrder.bind(this)
+		this.clearState = this.clearState.bind(this)
 	}
 
 
 	componentDidMount() {
-		this.loadCategories()
+		const { navigation } = this.props;
+		this.clearState();
+		this.loadCategories();
 		this.loadProducts('Pizzas');
+		this._navListener = navigation.addListener('willFocus', this.clearState)
+	}
+
+	componentWillUnmount() {
+		this._navListener.remove();
+	}
+
+	clearState() {
+		const { navigation } = this.props;
+		const clear = navigation.getParam('clear', false);
+		if (clear) {
+			this.setState({
+				order: [],
+				totalItems: 0,
+				totalPrice: 0,
+			},() => {
+				this.loadProducts('Pizzas');
+			})
+		}
 	}
 
 	gotoMyOrder() {
@@ -151,15 +174,6 @@ class Menu extends React.Component {
 		const newItem = {...item};
 		newItem.quantity = 1;
 		newItem.totalPrice = item.price;
-
-		// {
-		// 	id: item.idProduct,
-		// 	pricePerUnit: item.price,
-		// 	totalPrice: item.price,
-		// 	name: item.name,
-		// 	quantity: 1,
-		// 	et: item.estimatedTime,
-		// };
 		
 		let handleOrder = [...order || []];
 
@@ -187,10 +201,6 @@ class Menu extends React.Component {
 				} else {
 					handleOrder.push(newItem);
 				}
-				// handleOrder.forEach(function(order){
-				// 	total += order.totalPrice;
-				// 	items += order.quantity;
-				// });
 
 				total += newItem.totalPrice;
 				items += newItem.quantity;
@@ -285,10 +295,10 @@ class Menu extends React.Component {
 			<SafeAreaView
 				style={styles.container}
 			>
-				<Text
-					style={styles.title}
-				>Menu</Text>
-				<View style={{flex: 1}}>
+				<Header
+					title="Menu"
+				/>
+				<View style={{marginTop: 2, flex: 1}}>
 					<FlatList
 						horizontal={true}
 						data={categories}
