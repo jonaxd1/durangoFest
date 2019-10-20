@@ -1,21 +1,19 @@
 import request from '../utils/request';
 
-function placeOrder(order) {
+function getAllStores() {
 	return request({
-        url: '/orders/place',
-        params: order,
-		method: 'POST',
+		url: '/stores',
+		method: 'GET',
 	}).then((response) => {
 		const { data, errmsg, errcode } = response.data;
 		if (errmsg) throw Object({ message: errmsg, code: errcode });
 		return data;
 	});
 }
-
-function getOrders(idCustomer) {
+function getStore(idStore) {
 	return request({
-		url: '/orders/customers/all',
-		params: {idCustomer},
+		url: '/stores/one',
+		params: { where: { idStore: idStore } },
 		method: 'GET',
 	}).then((response) => {
 		const { data, errmsg, errcode } = response.data;
@@ -25,6 +23,7 @@ function getOrders(idCustomer) {
 }
 
 export default {
-	placeOrder,
-	getOrders,
+	// placeOrder,
+	getStore,
+	getAllStores,
 };

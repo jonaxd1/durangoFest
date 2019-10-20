@@ -7,13 +7,15 @@ import {
 	StyleSheet,
 	View,
 	TouchableOpacity,
+	ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
 import Toast from 'react-native-simple-toast';
-import Header from '../../components/Header';
-
-import api from '../../api';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
+
+import Header from '../../components/Header';
+import ModalView from './Modal';
+import api from '../../api';
 
 const styles = StyleSheet.create({
 	container: {
@@ -107,7 +109,7 @@ const styles = StyleSheet.create({
 		position: 'absolute',
 		left: 0,
 		right: 0,
-		bottom: 15,
+		bottom: 25,
 	},
 	textNotification: {
 		color: '#FFF',
@@ -116,7 +118,7 @@ const styles = StyleSheet.create({
 	}
 });
 
-class Menu extends React.Component {
+class Store extends React.Component {
 
 	constructor(props) {
 		super(props);
@@ -126,54 +128,115 @@ class Menu extends React.Component {
 			order: [],
 			totalItems: 0,
 			totalPrice: 0,
+			store: {},
+			isModalVisible: false,
+			filter: null,
+			loading: false,
 		};
-		this.loadCategories = this.loadCategories.bind(this)
-		this.loadProducts = this.loadProducts.bind(this)
-		this.addToOrder = this.addToOrder.bind(this)
-		this.gotoMyOrder = this.gotoMyOrder.bind(this)
-		this.clearState = this.clearState.bind(this)
+		this.gotoMyOrder = this.gotoMyOrder.bind(this);
+		this.getStore = this.getStore.bind(this);
 	}
 
 
 	componentDidMount() {
-		const { navigation } = this.props;
-		this.clearState();
-		this.loadCategories();
-		this.loadProducts('Pizzas');
-		this._navListener = navigation.addListener('willFocus', this.clearState)
+		this.getStore();
 	}
 
 	componentWillUnmount() {
-		this._navListener.remove();
 	}
 
-	clearState() {
-		const { navigation } = this.props;
-		const clear = navigation.getParam('clear', false);
-		if (clear) {
+	toggleModal = () => {
+		this.setState({ isModalVisible: !this.state.isModalVisible });
+	};
+
+	filterFunc = (value) => {
+		const { filter, store } = this.state;
+		if((value == 1 && filter != 1) || (value == null && filter != null)) {
 			this.setState({
+				filter: value,
+				loading: true,
+				// reset basket
 				order: [],
 				totalItems: 0,
 				totalPrice: 0,
-			},() => {
-				this.loadProducts('Pizzas');
-			})
+			}, 
+				() => {
+					this.getProducts(store);
+					setTimeout(() => {
+						this.setState({ loading: false})
+					}, 1500);
+				}
+			);
+		}
+		this.toggleModal();
+	}
+
+	getStore() {
+		const { navigation } = this.props;
+		const idStore = navigation.getParam('idStore', 0);
+		if (idStore > 0) {
+			api.stores.getStore(idStore)
+				.then((store) => {
+					this.setState({ store })
+					return store;
+				})
+				.then((store) => {
+					this.getProducts(store);
+				})
+				.catch((err) => {
+					Toast.show(err);
+				})
+		} else {
+			Alert.alert('Error', 'No se pudo obtener la información\nPor favor intenta más tarde.', () => {
+				navigation.goBack();
+			});
 		}
 	}
 
+	getProducts(store) {
+		const { filter } = this.state;
+		api.products.getProducts(store.idStore, filter)
+			.then((products) => {
+				this.setState({ products });
+			})
+			.catch((err) => {
+				Toast.show(err);
+			})
+	}
+
+	_keyExtractor = (item, index) => item.name;
+
+	// _renderCategory = ({item}) => (
+	// 	<TouchableOpacity
+	// 		style={styles.cardContainer}
+	// 		onPress={() => {}}
+	// 	>
+	// 		<ImageBackground
+	// 			source={{uri: 'http://localhost:3000/${item.img}'}}
+	// 			style={{ width: '100%', height: '100%' }}
+	// 			imageStyle={{borderTopRightRadius: 10, borderTopLeftRadius: 10}}
+	// 			>
+	// 			<Text
+	// 				style={styles.cardTitle}
+	// 			>{item.name}</Text>
+	// 		</ImageBackground>
+	// 	</TouchableOpacity>
+	// );
+
 	gotoMyOrder() {
 		const { navigation } = this.props;
-		const { order, totalPrice } = this.state;
-		navigation.navigate('Orden', {order: order, total: totalPrice });
+		const { order, totalPrice, store, filter } = this.state;
+		navigation.navigate('MyOrder', {order: order, total: totalPrice, idStore: store.idStore, filter });
 	}
 
 	addToOrder(item) {
-		const { order, totalItems, totalPrice } = this.state;
+		const { order, totalItems, totalPrice, filter } = this.state;
+
 		let total = totalPrice;
 		let items = totalItems;
 		const newItem = {...item};
 		newItem.quantity = 1;
-		newItem.totalPrice = item.price;
+		!filter ? newItem.totalPrice = item.price : newItem.totalPrice = item.pricePoints;
 		
 		let handleOrder = [...order || []];
 
@@ -182,7 +245,7 @@ class Menu extends React.Component {
 				return element.idProduct === newItem.idProduct;
 			});
 
-			total -= handleOrder[index].totalPrice;
+			total -= Number(handleOrder[index].totalPrice);
 			items -= handleOrder[index].quantity;
 
 			handleOrder.splice(index, 1);
@@ -190,19 +253,21 @@ class Menu extends React.Component {
 
 			this.setState({ order: handleOrder, totalItems: items, totalPrice: total });
 		} else {
-			if (totalItems < 5) {
+			if (totalItems < 10) {
 				item.isAdded = true;
 				const index = handleOrder.findIndex(function(element) {
 					return element.idProduct === newItem.idProduct;
 				});
 				if (index >= 0) {
 					handleOrder[index].quantity += 1;
-					handleOrder[index].totalPrice = handleOrder[index].price * handleOrder[index].quantity;
+					!filter
+						?  handleOrder[index].totalPrice = handleOrder[index].price * handleOrder[index].quantity
+						: handleOrder[index].totalPrice = handleOrder[index].pricePoints * handleOrder[index].quantity
 				} else {
 					handleOrder.push(newItem);
 				}
 
-				total += newItem.totalPrice;
+				total += Number(newItem.totalPrice);
 				items += newItem.quantity;
 
 				this.setState({ order: handleOrder, totalItems: items, totalPrice: total });
@@ -212,56 +277,14 @@ class Menu extends React.Component {
 		}
 	}
 
-	loadCategories() {
-		api.categories.getAll()
-			.then((data) => {
-				this.setState({categories: data});
-			})
-			.catch((err) => {
-				Toast.show('Oops! Ocurrio un error.\nIntenta de nuevo.', Toast.LONG);
-			})
-	}
-
-	loadProducts(category) {
-		api.products.byCategory(category)
-			.then((data) => {
-				this.setState({products: data});
-			})
-			.catch((err) => {
-				Toast.show(err, Toast.LONG);
-			});
-	}
-
-	_keyExtractor = (item, index) => item.name;
-
-	_renderCategory = ({item}) => (
-		<TouchableOpacity
-			style={styles.cardContainer}
-			onPress={() => this.loadProducts(item.name)}
-		>
-			<ImageBackground
-				source={{uri: `http://localhost:3000/${item.img}`}}
-				style={{ width: '100%', height: '100%' }}
-				imageStyle={{borderTopRightRadius: 10, borderTopLeftRadius: 10}}
-				>
-				<Text
-					style={styles.cardTitle}
-				>{item.name}</Text>
-			</ImageBackground>
-		</TouchableOpacity>
-	);
-
 	_renderProduct = ({item}) => {
 		const iconType = (item.isAdded) ? "check" : "cart-plus"
-		
+		const { filter } = this.state;
+
 		return (
 		<View
 			style={styles.rowContainer}
 		>
-			<Image
-				source={{uri: `http://localhost:3000/${item.img}`}}
-				style={styles.rowImg}
-			/>
 			<View
 				style={styles.rowDataContainer}
 			>
@@ -271,9 +294,9 @@ class Menu extends React.Component {
 				<Text
 					style={styles.rowDescription}
 				>{item.description}</Text>
-				<Text
-					style={styles.rowPrice}
-				>{`$${item.price}`}</Text>
+					<Text
+						style={styles.rowPrice}
+					>{!filter ? `$${ item.price}` : `${item.pricePoints} puntos`}</Text>
 			</View>
 			<TouchableOpacity
 				style={item.isAdded ? (styles.rowButtonAddedContainer) : styles.rowButtonContainer}
@@ -290,22 +313,35 @@ class Menu extends React.Component {
 	)};
 	
 	render() {
-		const { categories, products, totalItems, totalPrice } = this.state;
+		const { products, totalItems, totalPrice, loading } = this.state;
+		if(loading) {
+			return (
+				<View style={{
+					flex: 1, flexDirection: "column",
+					alignItems: "center",
+					justifyContent: "center"
+				}}>
+					<ActivityIndicator size="large" />
+				</View>
+			)
+		}
 		return (
 			<SafeAreaView
 				style={styles.container}
 			>
 				<Header
-					title="Menu"
+					action={this.toggleModal}
+					btnName="ios-funnel"
+					title="Store"
 				/>
-				<View style={{marginTop: 2, flex: 1}}>
+				{/* <View style={{marginTop: 2, flex: 1}}>
 					<FlatList
 						horizontal={true}
 						data={categories}
 						renderItem={this._renderCategory}
 						keyExtractor={this._keyExtractor}
 					/>
-				</View>
+				</View> */}
 				<View style={{flex: 3}}>
 					<FlatList
 						data={products}
@@ -336,9 +372,10 @@ class Menu extends React.Component {
 						</TouchableOpacity>
 					) : null
 				}
+				<ModalView filterFunc={this.filterFunc} isModalVisible={this.state.isModalVisible} toggleModal={this.toggleModal} />
 			</SafeAreaView>
 		);
 	}
 }
 
-export default Menu;
+export default Store;

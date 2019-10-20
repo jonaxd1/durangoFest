@@ -6,6 +6,7 @@ import {
 	FlatList,
 	TouchableOpacity,
 	Alert,
+	ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
 import Toast from 'react-native-simple-toast';
@@ -34,6 +35,9 @@ class History extends React.Component {
 		super(props);
 		this.state = {
 			orders: [],
+			loading: false,
+			refreshing: false,
+			
 		};
 		this.loadOrders = this.loadOrders.bind(this)
 	}
@@ -47,23 +51,19 @@ class History extends React.Component {
 		await AsyncStorage.getItem('TOKEN').then((token) => {
 			user = token;
 		})
+		this.setState({loading: true});
+
 		api.orders.getOrders(user)
 			.then((res) => {
 				this.setState({orders: res});
 			})
 			.catch((err) => {
 				Toast.show(err, Toast.LONG);
-			});
-	}
-
-	logout = () => {
-		const { navigation } = this.props;
-		api.auth.signout()
-			.then(() => {
-				navigation.navigate('Auth');
 			})
-			.catch((err) => {
-				Toast.show(err.message);
+			.finally(() => {
+				setTimeout(() => {
+					this.setState({loading: false})
+				},1000)
 			});
 	}
 
@@ -102,6 +102,7 @@ class History extends React.Component {
 							paddingLeft: 10,
 						}}
 					>
+						<Text style={{ fontWeight: 'bold' }}>{item.store ? item.store.name : 'Null'}</Text>
 						<Text>Orden #: {item.idOrder}</Text>
 						<Text>{date.toString()}</Text>
 					</View>
@@ -112,39 +113,26 @@ class History extends React.Component {
 						fontWeight: 'bold',
 						color: '#518E54'
 					}}
-				>${item.saleAmount}</Text>
+				>${item.total}</Text>
 			</View>
 		)
 	}
 
 	render() {
-		const { orders } = this.state
+		const { orders, loading } = this.state
+		// if (loading) {
+		// 	return <View style={{
+		// 		width: '100%',
+		// 		height: '100%'
+		// 	  }}>
+		// 		  <ActivityIndicator style={{ color: '#000' }} />
+		// 	</View>;
+		// }
 		return (
 			<SafeAreaView
 				style={styles.container}
 			>
-				{/* <View
-					style={{
-						flexDirection: 'row',
-						justifyContent: 'space-between',
-						alignItems: 'center',
-						paddingHorizontal: 22,
-					}}
-				>
-					<Text
-						style={styles.title}
-					>
-						Historial
-					</Text>
-					<TouchableOpacity
-						onPress={() => {}}
-					>
-						<Ionicon name="ios-log-out" size={28} color="#0B6AFF"/>
-					</TouchableOpacity>
-				</View> */}
 				<Header
-					btnName="ios-log-out"
-					action={this.logout}
 					title="Historial"
 				/>
 				<FlatList
@@ -152,6 +140,9 @@ class History extends React.Component {
 					renderItem={this._renderOrders}
 					keyExtractor={this._keyExtractor}
 					ItemSeparatorComponent={this._itemSeparator}
+					onRefresh={() => this.loadOrders()}
+					refreshing={loading}
+
 				/>
 			</SafeAreaView>
 		);

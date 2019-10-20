@@ -1,9 +1,9 @@
 import request from '../utils/request';
 
-function getInfo(idUser) {
+function getInfo(idCustomer) {
 	return request({
-		url: '/users/info',
-		params: { idUser },
+		url: '/customers/info',
+		params: { idCustomer },
 	}).then((response) => {
 		const { data, errmsg, errcode } = response.data;
 		if (errmsg) throw Object({ message: errmsg, code: errcode });

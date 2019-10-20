@@ -29,9 +29,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "2D02E47A1E0B4A5D006451C7"
-               BuildableName = "food_app-tvOS.app"
-               BlueprintName = "food_app-tvOS"
-               ReferencedContainer = "container:food_app.xcodeproj">
+               BuildableName = "fest-tvOS.app"
+               BlueprintName = "fest-tvOS"
+               ReferencedContainer = "container:fest.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -43,9 +43,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "2D02E48F1E0B4A5D006451C7"
-               BuildableName = "food_app-tvOSTests.xctest"
-               BlueprintName = "food_app-tvOSTests"
-               ReferencedContainer = "container:food_app.xcodeproj">
+               BuildableName = "fest-tvOSTests.xctest"
+               BlueprintName = "fest-tvOSTests"
+               ReferencedContainer = "container:fest.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -55,29 +55,27 @@
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "2D02E47A1E0B4A5D006451C7"
+            BuildableName = "fest-tvOS.app"
+            BlueprintName = "fest-tvOS"
+            ReferencedContainer = "container:fest.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
       <Testables>
          <TestableReference
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "2D02E48F1E0B4A5D006451C7"
-               BuildableName = "food_app-tvOSTests.xctest"
-               BlueprintName = "food_app-tvOSTests"
-               ReferencedContainer = "container:food_app.xcodeproj">
+               BuildableName = "fest-tvOSTests.xctest"
+               BlueprintName = "fest-tvOSTests"
+               ReferencedContainer = "container:fest.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "2D02E47A1E0B4A5D006451C7"
-            BuildableName = "food_app-tvOS.app"
-            BlueprintName = "food_app-tvOS"
-            ReferencedContainer = "container:food_app.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
-      <AdditionalOptions>
-      </AdditionalOptions>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
@@ -94,13 +92,11 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "2D02E47A1E0B4A5D006451C7"
-            BuildableName = "food_app-tvOS.app"
-            BlueprintName = "food_app-tvOS"
-            ReferencedContainer = "container:food_app.xcodeproj">
+            BuildableName = "fest-tvOS.app"
+            BlueprintName = "fest-tvOS"
+            ReferencedContainer = "container:fest.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
-      <AdditionalOptions>
-      </AdditionalOptions>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -113,9 +109,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "2D02E47A1E0B4A5D006451C7"
-            BuildableName = "food_app-tvOS.app"
-            BlueprintName = "food_app-tvOS"
-            ReferencedContainer = "container:food_app.xcodeproj">
+            BuildableName = "fest-tvOS.app"
+            BlueprintName = "fest-tvOS"
+            ReferencedContainer = "container:fest.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

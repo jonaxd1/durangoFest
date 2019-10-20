@@ -123,22 +123,31 @@ class MyOrder extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+			idStore: 0,
 			order: [],
 			totalItems: 0,
 			totalPrice: 0,
-			totalEstimatedTime: 0,
+			totalEstimatedPoints: 0,
 		};
 		this.addQuantity = this.addQuantity.bind(this);
 		this.removeQuantity = this.removeQuantity.bind(this);
 		this.loadOrder = this.loadOrder.bind(this);
 		this.calculateTotal = this.calculateTotal.bind(this);
-		this.calculateTime = this.calculateTime.bind(this);
+		this.calculatePoints = this.calculatePoints.bind(this);
 		this.placeOrder = this.placeOrder.bind(this);
 	}
 	
 	componentDidMount() {
 		const { navigation } = this.props;
-		this.loadOrder;
+		const idStore = navigation.getParam('idStore', 0);
+		if (idStore > 0) {
+			this.setState({ idStore })
+			this.loadOrder;
+		} else {
+			Alert.alert('Oops!', 'Se produjo un error inesperado\nPor favor intenta más tarde.', () => {
+				navigation.goBack('Home');
+			});
+		}
 		this._navListener = navigation.addListener('willFocus', this.loadOrder)
 	}
 
@@ -151,17 +160,18 @@ class MyOrder extends React.Component {
 
 		const order = navigation.getParam('order', []);
 		const total = navigation.getParam('total', 0);
+		const filter = navigation.getParam('filter');
 		navigation.setParams({order: [], total: 0});
-		this.setState({ order: order, totalPrice: total }, () => {
-			this.calculateTime();
+		this.setState({ order: order, totalPrice: total, filter }, () => {
+			this.calculatePoints();
 			this.totalItems();
 		});
 	}
 
 	addQuantity(idProduct) {
-		const { order, totalItems} = this.state;
+		const { order, totalItems, filter} = this.state;
 
-		if (totalItems < 5) {
+		if (totalItems < 10) {
 			let handleOrder = [...order || []];
 		
 			const index = handleOrder.findIndex(function(element) {
@@ -170,22 +180,24 @@ class MyOrder extends React.Component {
 			if (index >= 0) {
 				if (handleOrder[index].quantity < 5) {
 					handleOrder[index].quantity += 1;
-					handleOrder[index].totalPrice = handleOrder[index].price * handleOrder[index].quantity;
+					!filter
+						? handleOrder[index].totalPrice = Number(handleOrder[index].price * handleOrder[index].quantity)
+						: handleOrder[index].totalPrice = Number(handleOrder[index].pricePoints * handleOrder[index].quantity)
 					this.setState({order: handleOrder});
 					this.calculateTotal();
-					this.calculateTime(true);
+					this.calculatePoints(true);
 					this.totalItems();
 				} else {
 					Toast.show('No puedes agregar más de 5 items del mismo producto.', Toast.SHORT);
 				}
 			}
 		} else {
-			Toast.show('No puedes agregar más de 5 items.', Toast.SHORT);
+			Toast.show('No puedes agregar más de 10 items.', Toast.SHORT);
 		}
 	}
 	
 	removeQuantity(idProduct) {
-		const { order, totalItems} = this.state;
+		const { order, totalItems, filter} = this.state;
 
 		if (totalItems > 1) {
 			let handleOrder = [...order || []];
@@ -196,10 +208,12 @@ class MyOrder extends React.Component {
 			if (index >= 0) {
 				if (handleOrder[index].quantity > 1) {
 					handleOrder[index].quantity -= 1;
-					handleOrder[index].totalPrice = handleOrder[index].price * handleOrder[index].quantity;
+					!filter 
+						? handleOrder[index].totalPrice = handleOrder[index].price * handleOrder[index].quantity
+						: handleOrder[index].totalPrice = handleOrder[index].pricePoints * handleOrder[index].quantity
 					this.setState({order: handleOrder},() => {
 						this.calculateTotal();
-						this.calculateTime();
+						this.calculatePoints();
 						this.totalItems();
 					});
 					
@@ -207,7 +221,7 @@ class MyOrder extends React.Component {
 					handleOrder.splice(index, 1);
 					this.setState({order: handleOrder},() => {
 						this.calculateTotal();
-						this.calculateTime();
+						this.calculatePoints();
 						this.totalItems();
 					});
 				}
@@ -217,7 +231,7 @@ class MyOrder extends React.Component {
 				order: [],
 				totalItems: 0,
 				totalPrice: 0,
-				totalEstimatedTime: 0,
+				totalEstimatedPoints: 0,
 			},() => {
 				this.props.navigation.navigate('Menu');
 			});
@@ -230,24 +244,26 @@ class MyOrder extends React.Component {
 		let handleOrder = [...order || []];
 
 		handleOrder.forEach(function(order){
-			total += order.totalPrice;
+			total += Number(order.totalPrice);
 		});
 		this.setState({totalPrice: total});
 	}
 
-	calculateTime(isModify) {
-		const { totalEstimatedTime } = this.state;
+	calculatePoints() {
+		const { filter } = this.state;
 		let total = 0;
-		if (isModify) {
-			total = totalEstimatedTime;
-		}
-		const { order } = this.state;
-		let handleOrder = [...order || []];
+		if (!filter) {
+			// if (isModify) {
+			// 	total = totalEstimatedPoints;
+			// }
+			const { order } = this.state;
+			let handleOrder = [...order || []];
 
-		handleOrder.forEach(function(order){
-			total += order.estimatedTime;
-		});
-		this.setState({totalEstimatedTime: total});
+			handleOrder.forEach(function(order){
+				total += (order.totalPrice * 0.05);
+			});
+		}
+		this.setState({totalEstimatedPoints: total});
 	}
 
 	totalItems() {
@@ -264,6 +280,7 @@ class MyOrder extends React.Component {
 	_keyExtractor = (item, index) => item.name;
 
 	_renderProduct = ({item}) => {
+		const { filter } = this.state;
 		return (
 		<View
 			style={styles.rowContainer}
@@ -283,7 +300,7 @@ class MyOrder extends React.Component {
 				>{item.description}</Text>
 				<Text
 					style={styles.rowPrice}
-				>${item.price}</Text>
+				>{!filter ? `$${item.price}` : `${item.pricePoints} puntos`}</Text>
 			</View>
 			<View
 				style={{
@@ -342,8 +359,7 @@ class MyOrder extends React.Component {
 	}
 
 	async placeOrder() {
-		debugger;
-		const { order, totalPrice } = this.state;
+		const { order, totalPrice, idStore, totalEstimatedPoints, filter } = this.state;
 		let handleOrder = [...order || []];
 		let orderToPlace = [];
 		let orderObj = {};
@@ -361,8 +377,11 @@ class MyOrder extends React.Component {
 		});
 		orderObj = {
 			order: orderToPlace,
-			idUser: user,
-			saleAmount: totalPrice,
+			idCustomer: user,
+			idStore: idStore,
+			total: totalPrice,
+			points: totalEstimatedPoints,
+			filter,
 		}
 		api.orders.placeOrder(orderObj)
 			.then((res) => {
@@ -372,14 +391,19 @@ class MyOrder extends React.Component {
 					order: [],
 					totalItems: 0,
 					totalPrice: 0,
-					totalEstimatedTime: 0,
+					totalEstimatedPoints: 0,
 				});
-				navigation.navigate('Confirmation', {order: res});
+				navigation.navigate('Confirmation', { order: res, filter });
+			})
+			.catch((err) => {
+				if (err.message == "Insufficient points") {
+					Alert.alert('Oops!','Parece que no tienes suficientes puntos')
+				}
 			});
 	};
 
 	render() {
-		const { order, totalPrice, totalEstimatedTime } = this.state;
+		const { order, totalPrice, totalEstimatedPoints } = this.state;
 		
 		return (
 			<SafeAreaView
@@ -411,10 +435,10 @@ class MyOrder extends React.Component {
 								<View>
 									<Text
 										style={styles.textEstimatedTimeTitle}
-									>Tiempo Estimado de Entrega</Text>
+									>Puntos a Acumular</Text>
 									<Text
 										style={styles.textEstimatedTime}
-									>{`${totalEstimatedTime} mins`}</Text>
+									>{`${totalEstimatedPoints} Puntos`}</Text>
 								</View>
 								<View>
 									<Text
@@ -464,7 +488,7 @@ class MyOrder extends React.Component {
 					>Disfruta</Text>
 					<TouchableOpacity
 						style={styles.buttonContainer}
-						onPress={() => {this.props.navigation.navigate('Menu')}}
+						onPress={() => {this.props.navigation.navigate('Store')}}
 					>
 						<Text
 							style={styles.textButton}

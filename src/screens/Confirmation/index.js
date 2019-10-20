@@ -79,14 +79,14 @@ class Confirmation extends React.Component {
 
 	componentDidMount() {
 		const { navigation } = this.props
-		debugger;
 		const order = navigation.getParam('order', [])
-		this.setState({order})
+		const filter = navigation.getParam('filter')
+		this.setState({order, filter})
 	}
 
     render() {
 		const { navigation } = this.props;
-		const { order } = this.state;
+		const { order, filter } = this.state;
         return (
             <SafeAreaView
 				style={styles.container}
@@ -104,13 +104,14 @@ class Confirmation extends React.Component {
 						source={require('../../assets/images/cutting-food.png')}
 						style={{width: 120, height: 109}}
 					/>
-					<Text>No. de Orden: {order.idOrder}</Text>
-					<Text>Total a Pagar: ${order.saleAmount}</Text>
+					<Text style={{ fontSize: 18}}>No. de Orden: {order.idOrder}</Text>
+					<Text style={{ fontSize: 18}}>Total a Pagar: ${order.total}</Text>
+					<Text style={{ fontSize: 18}}>Puntos Acumulados: ${!filter ? Number(order.total * 0.05) : 0}</Text>
 				</View>
                 <TouchableOpacity
 					style={styles.button}
                     onPress={() => {
-						navigation.navigate('Menu', {clear: true});
+						navigation.navigate('Home');
 					}}
 				>
 					<Text style={styles.buttonText}>Genial</Text>

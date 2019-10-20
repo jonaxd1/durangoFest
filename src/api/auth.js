@@ -3,7 +3,7 @@ import request from '../utils/request';
 
 function signin(params) {
 	return request({
-		url: '/signin',
+		url: '/signin/customers',
 		params,
 		method: 'POST',
 	}).then((response) => {
@@ -21,7 +21,25 @@ function signin(params) {
 
 function signup(params) {
 	return request({
-		url: '/signup',
+		url: '/signup/customers',
+		params,
+		method: 'POST',
+	}).then((response) => {
+		const { data, errmsg, errcode } = response.data;
+		if (errmsg) throw Object({ message: errmsg, code: errcode });
+
+		return new Promise((res, rej) => {
+			AsyncStorage.setItem('TOKEN', data, (err) => {
+				if (err) return rej(err);
+				return res(data);
+			});
+		});
+	});
+}
+
+function signinSocial(params) {
+	return request({
+		url: '/signinsocial/customers',
 		params,
 		method: 'POST',
 	}).then((response) => {
@@ -49,5 +67,6 @@ function signout() {
 export default {
 	signin,
 	signup,
+	signinSocial,
 	signout,
 };

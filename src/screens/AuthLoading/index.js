@@ -16,8 +16,8 @@ class AuthLoading extends React.Component {
 		} catch (err) {
 			token = null;
 		}
-		if (token) navigation.navigate('Menu');
-		else navigation.navigate('Signin');
+		if (token) navigation.navigate('App');
+		else navigation.navigate('Auth');
 	}
 
 	// Render any loading content that you like here

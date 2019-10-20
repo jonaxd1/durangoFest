@@ -1,10 +1,9 @@
 import request from '../utils/request';
 
-function getProducts(idStore, filter) {
+function getPoints(idCustomer) {
 	return request({
-        url: '/products/by',
-        params: { idStore, filter },
-		method: 'GET',
+		url: '/rewards/valid',
+		params: { idCustomer },
 	}).then((response) => {
 		const { data, errmsg, errcode } = response.data;
 		if (errmsg) throw Object({ message: errmsg, code: errcode });
@@ -12,6 +11,4 @@ function getProducts(idStore, filter) {
 	});
 }
 
-export default {
-	getProducts,
-};
+export default { getPoints };

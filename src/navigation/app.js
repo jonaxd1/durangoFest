@@ -3,26 +3,20 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 
 import Ionicicon from 'react-native-vector-icons/Ionicons';
 
-import Menu from '../screens/Menu';
+import Home from '../screens/Home';
+import Store from '../screens/Store';
 import MyOrder from '../screens/MyOrder';
 import Confirmation from '../screens/Confirmation';
 import History from '../screens/History';
+import Account from '../screens/Account';
 
 const BottomNavigator = createBottomTabNavigator(
 	{
-		Menu: {
-			screen: Menu,
+		Home: {
+			screen: Home,
 			navigationOptions: {
 				tabBarIcon: ({ tintColor }) => (
 				  <Ionicicon name="ios-today" size={28} color={tintColor} />
-				)
-			},
-		},
-		Orden: {
-			screen: MyOrder,
-			navigationOptions: {
-				tabBarIcon: ({ tintColor }) => (
-				  <Ionicicon name="md-list-box" size={28} color={tintColor} />
 				)
 			},
 		},
@@ -30,7 +24,15 @@ const BottomNavigator = createBottomTabNavigator(
 			screen: History,
 			navigationOptions: {
 				tabBarIcon: ({ tintColor }) => (
-				  <Ionicicon name="ios-filing" size={28} color={tintColor} />
+				  <Ionicicon name="ios-list" size={28} color={tintColor} />
+				)
+			},
+		},
+		Cuenta: {
+			screen: Account,
+			navigationOptions: {
+				tabBarIcon: ({ tintColor }) => (
+				  <Ionicicon name="ios-contact" size={28} color={tintColor} />
 				)
 			},
 		}
@@ -46,6 +48,8 @@ const BottomNavigator = createBottomTabNavigator(
 const navigator = createStackNavigator(
 	{
 		BottomNavigator,
+		Store,
+		MyOrder,
 		Confirmation: Confirmation,
 	},{
 		headerMode: "none"
