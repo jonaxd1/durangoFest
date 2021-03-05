@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { Service } from 'axios-middleware';
 
 const request = axios.create({
-	baseURL: 'http://localhost:3000/api',
+	baseURL: 'http://api.food.vabadus.mx/api',
 });
 
 const service = new Service(request);

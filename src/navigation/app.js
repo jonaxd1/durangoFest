@@ -32,7 +32,7 @@ const BottomNavigator = createBottomTabNavigator(
 			screen: Account,
 			navigationOptions: {
 				tabBarIcon: ({ tintColor }) => (
-				  <Ionicicon name="ios-contact" size={28} color={tintColor} />
+				  <Ionicicon name="ios-person-circle" size={28} color={tintColor} />
 				)
 			},
 		}

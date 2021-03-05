@@ -144,7 +144,7 @@ class Account extends React.Component {
 					<Text
 						style={{ fontSize: 16, fontWeight: '300' }}
 					>Puntos Disponibles:</Text>
-					<Text style={{ fontSize: 28, fontWeight: 'bold' }}>{totalPoints.toString()}</Text>
+					<Text style={{ fontSize: 28, fontWeight: 'bold' }}>{totalPoints?.toString()}</Text>
 					<Text style={{ color: '#606060' }}>hasta: 01/12/2019</Text>
 					<View style={{ width:'100%', height:1, backgroundColor: '#DCDCDC', marginTop: 15}}/>
 					<FlatList

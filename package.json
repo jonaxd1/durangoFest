@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
+	"build:android": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res",
     "start": "react-native start",
     "ios": "react-native run-ios",
     "test": "jest",
@@ -10,6 +11,7 @@
   },
   "dependencies": {
     "@react-native-community/async-storage": "^1.6.1",
+    "@react-native-community/toolbar-android": "^0.1.0-rc.2",
     "axios": "^0.21.1",
     "axios-middleware": "^0.3.1",
     "prop-types": "^15.7.2",
@@ -20,6 +22,7 @@
     "react-native-linear-gradient": "^2.5.6",
     "react-native-modal": "^11.4.0",
     "react-native-reanimated": "^1.1.0",
+    "react-native-screens": "^2.18.1",
     "react-native-simple-toast": "^0.1.1",
     "react-native-vector-icons": "^6.6.0",
     "react-navigation": "^3.11.1",

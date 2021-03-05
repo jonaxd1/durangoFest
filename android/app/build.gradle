@@ -1,4 +1,5 @@
 apply plugin: "com.android.application"
+apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
 
 import com.android.build.OutputFile
 
@@ -128,7 +129,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.food_app"
+        applicationId "mx.vabadus.foodapp"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -189,6 +190,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation("com.facebook.android:facebook-login:[8.1")
     implementation "com.facebook.react:react-native:+"  // From node_modules
 
     if (enableHermes) {

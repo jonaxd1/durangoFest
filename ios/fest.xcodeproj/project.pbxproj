@@ -714,7 +714,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = mx.vabadus.durangofest;
+				PRODUCT_BUNDLE_IDENTIFIER = mx.vabadus.foodApp;
 				PRODUCT_NAME = "Durango Fest";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -733,7 +733,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = mx.vabadus.durangofest;
+				PRODUCT_BUNDLE_IDENTIFIER = mx.vabadus.foodApp;
 				PRODUCT_NAME = "Durango Fest";
 				VERSIONING_SYSTEM = "apple-generic";
 			};

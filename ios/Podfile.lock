@@ -150,19 +150,19 @@ PODS:
     - React-cxxreact (= 0.60.4)
     - React-jsi (= 0.60.4)
   - React-jsinspector (0.60.4)
-  - react-native-fbsdk (1.0.4):
+  - react-native-fbsdk (1.1.2):
     - React
-    - react-native-fbsdk/Core (= 1.0.4)
-    - react-native-fbsdk/Login (= 1.0.4)
-    - react-native-fbsdk/Share (= 1.0.4)
-  - react-native-fbsdk/Core (1.0.4):
-    - FBSDKCoreKit (~> 5.5)
+    - react-native-fbsdk/Core (= 1.1.2)
+    - react-native-fbsdk/Login (= 1.1.2)
+    - react-native-fbsdk/Share (= 1.1.2)
+  - react-native-fbsdk/Core (1.1.2):
+    - FBSDKCoreKit (= 5.8)
     - React
-  - react-native-fbsdk/Login (1.0.4):
-    - FBSDKLoginKit (~> 5.5)
+  - react-native-fbsdk/Login (1.1.2):
+    - FBSDKLoginKit (= 5.8)
     - React
-  - react-native-fbsdk/Share (1.0.4):
-    - FBSDKShareKit (~> 5.5)
+  - react-native-fbsdk/Share (1.1.2):
+    - FBSDKShareKit (= 5.8)
     - React
   - react-native-simple-toast (0.1.1):
     - React
@@ -190,13 +190,13 @@ PODS:
   - React-RCTWebSocket (0.60.4):
     - React-Core (= 0.60.4)
     - React-fishhook (= 0.60.4)
-  - RNCAsyncStorage (1.6.1):
-    - React
-  - RNGestureHandler (1.3.0):
-    - React
-  - RNReanimated (1.1.0):
-    - React
-  - RNVectorIcons (6.6.0):
+  - RNCAsyncStorage (1.12.1):
+    - React-Core
+  - RNGestureHandler (1.10.3):
+    - React-Core
+  - RNReanimated (1.13.2):
+    - React-Core
+  - RNVectorIcons (6.7.0):
     - React
   - yoga (0.60.4.React)
 
@@ -235,8 +235,11 @@ DEPENDENCIES:
   - yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
-  https://github.com/CocoaPods/Specs.git:
+  trunk:
     - boost-for-react-native
+    - FBSDKCoreKit
+    - FBSDKLoginKit
+    - FBSDKShareKit
     - Firebase
     - FirebaseAnalytics
     - FirebaseAnalyticsInterop
@@ -250,10 +253,6 @@ SPEC REPOS:
     - GTMSessionFetcher
     - nanopb
     - Protobuf
-  trunk:
-    - FBSDKCoreKit
-    - FBSDKLoginKit
-    - FBSDKShareKit
 
 EXTERNAL SOURCES:
   BVLinearGradient:
@@ -345,8 +344,8 @@ SPEC CHECKSUMS:
   React-jsi: 21d3153b1153fbf6510a92b6b11e33e725cb7432
   React-jsiexecutor: 7549641e48bafae7bfee3f3ea19bf4901639c5de
   React-jsinspector: 73f24a02fa684ed6a2b828ba116874a2191ded88
-  react-native-fbsdk: 45e28bbab3e905cbc635c0bdd3444b372e933ae9
-  react-native-simple-toast: 3e821c055485f03c6f6fa9b9431c1081ba46d37a
+  react-native-fbsdk: c35d42169e64aaf66f01713c1e18d0674f7f6519
+  react-native-simple-toast: 1fc69d83c24279ed4f9624352551a5a3406678a2
   React-RCTActionSheet: 9f71d7ae3e8fb10e08d162cbf14c621349dbfab3
   React-RCTAnimation: 981d8c95b0e30918a9832ccac32af83562a27fae
   React-RCTBlob: 21e73d1020a302a75fed30dbaee9f15287b80baa
@@ -357,12 +356,12 @@ SPEC CHECKSUMS:
   React-RCTText: e0f224898b13af9aa036ea7cb3d438daa68c1044
   React-RCTVibration: 0bea40cd51bd089bd591a8f74c86e91fdf2666c5
   React-RCTWebSocket: 163873f4cdd5f1058a9483443404fc3801581cb6
-  RNCAsyncStorage: 621bad7a889b5bf1583a52547f2dcd3a4d1ff15e
-  RNGestureHandler: 5329a942fce3d41c68b84c2c2276ce06a696d8b0
-  RNReanimated: 7a52c90473b5e81c13408d40d797b98387eaddde
-  RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
+  RNCAsyncStorage: b03032fdbdb725bea0bd9e5ec5a7272865ae7398
+  RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
+  RNReanimated: e03f7425cb7a38dcf1b644d680d1bfc91c3337ad
+  RNVectorIcons: 368d6d8b8301224e5ffb6254191f4f8876c2be0d
   yoga: c2c050f6ae6e222534760cc82f559b89214b67e2
 
 PODFILE CHECKSUM: c05b497c4db0c65e09e77221462378a2a37c3e53
 
-COCOAPODS: 1.8.3
+COCOAPODS: 1.10.1
