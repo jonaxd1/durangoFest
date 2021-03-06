@@ -7,13 +7,12 @@ function signin(params) {
 		params,
 		method: 'POST',
 	}).then((response) => {
-		const { data, errmsg, errcode } = response.data;
+		const { token, user, errmsg, errcode } = response.data;
 		if (errmsg) throw Object({ message: errmsg, code: errcode });
-
 		return new Promise((res, rej) => {
-			AsyncStorage.setItem('TOKEN', data, (err) => {
+			AsyncStorage.setItem('TOKEN', token, (err) => {
 				if (err) return rej(err);
-				return res(data);
+				return res({token, user});
 			});
 		});
 	});
